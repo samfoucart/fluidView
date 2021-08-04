@@ -1,5 +1,5 @@
 class FluidView {
-    constructor(size, dt, diffusion, viscosity, ctx, cellScale) {
+    constructor(size, dt, diffusion, viscosity, ctx, canvas, cellScale) {
         this.N = size;
         this.dt = dt;
         this.diffusion = diffusion;
@@ -15,10 +15,14 @@ class FluidView {
         this.Vy0 = new Array(this.N * this.N);
 
         this.ctx = ctx;
+        this.canvas = canvas;
+
         this.cellScale = cellScale;
 
         this.activeY = -1;
         this.activeX = -1;
+
+        this.render = this.render.bind(this);
     }
 
     render() {
@@ -36,13 +40,12 @@ class FluidView {
                 }
             }
         }
+        requestAnimationFrame(this.render);
     }
 
     hover(x, y) {
         this.activeY = Math.floor(y / this.cellScale) * this.cellScale;
         this.activeX = Math.floor(x / this.cellScale) * this.cellScale;
-        console.log(this.activeX);
-        console.log(this.activeY);
     }
 
     static lerp(a, b, alpha) {
