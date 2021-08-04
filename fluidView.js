@@ -177,8 +177,8 @@ class FluidView {
 
         for (var i = 1; i < this.N - 1; ++i) {
             for (var j = 1; j < this.N - 1; ++j) {
-                u[this.index(i, j)] = u[this.index(i, j)] - (.5 * (p[this.index(i+1, j)] - p[this.index(i-1, j)]) / h);
-                u[this.index(i, j)] = u[this.index(i, j)] - (.5 * (p[this.index(i, j+1)] - p[this.index(i, j-1)]) / h);
+                u[this.index(i, j)] -= (.5 * (p[this.index(i+1, j)] - p[this.index(i-1, j)]) / h);
+                v[this.index(i, j)] -= (.5 * (p[this.index(i, j+1)] - p[this.index(i, j-1)]) / h);
             }
         }
 
