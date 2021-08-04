@@ -5,14 +5,14 @@ class FluidView {
         this.diffusion = diffusion;
         this.viscosity = viscosity;
 
-        this.s = new Array(this.N * this.N);
-        this.density = new Array(this.N * this.N);
+        this.s = new Array(this.N * this.N).fill(0);
+        this.density = new Float32Array(this.N * this.N);
 
-        this.Vx = new Array(this.N * this.N);
-        this.Vy = new Array(this.N * this.N);
+        this.Vx = new Array(this.N * this.N).fill(0);
+        this.Vy = new Array(this.N * this.N).fill(0);
 
-        this.Vx0 = new Array(this.N * this.N);
-        this.Vy0 = new Array(this.N * this.N);
+        this.Vx0 = new Array(this.N * this.N).fill(0);
+        this.Vy0 = new Array(this.N * this.N).fill(0);
 
         this.ctx = ctx;
         this.canvas = canvas;
@@ -34,8 +34,14 @@ class FluidView {
                     this.ctx.fillStyle = "black";
                     this.ctx.fillRect(col, row, this.cellScale, this.cellScale);
                 } else {
-                    let brightness = FluidView.lerp(0, 255, this.density[this.index(row, col)]);
+                    let brightness = FluidView.lerp(255, 0, this.density[this.indexCanvas(row, col)]);
+                    // if (brightness != 0) {
+                    //     console.log(row);
+                    //     console.log(col);
+                    //     console.log(brightness);
+                    // }
                     this.ctx.fillStyle = 'rgb(' + brightness + ', ' + brightness + ', ' + brightness + ')';
+                    this.ctx.fillRect(col, row, this.cellScale, this.cellScale);
                     this.ctx.strokeRect(col, row, this.cellScale, this.cellScale);
                 }
             }
@@ -48,12 +54,23 @@ class FluidView {
         this.activeX = Math.floor(x / this.cellScale) * this.cellScale;
     }
 
+    addDensity(x, y, amount) {
+        let old = this.density[this.indexCanvas(y, x)];
+        //console.log(old);
+        this.density[this.indexCanvas(y, x)] = Math.min(1.0, old + amount);
+        //console.log(this.density[this.indexCanvas(y, x)]);
+    }
+
     static lerp(a, b, alpha) {
         return a + (alpha * (b - a));
     }
 
     index(row, column) {
         return column + (row * this.N);
+    }
+
+    indexCanvas(row, column) {
+        return Math.floor(column / this.cellScale) + (Math.floor(row / this.cellScale) * this.N);
     }
 
 };
