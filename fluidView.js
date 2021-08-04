@@ -35,11 +35,7 @@ class FluidView {
                     this.ctx.fillRect(col, row, this.cellScale, this.cellScale);
                 } else {
                     let brightness = FluidView.lerp(255, 0, this.density[this.indexCanvas(row, col)]);
-                    // if (brightness != 0) {
-                    //     console.log(row);
-                    //     console.log(col);
-                    //     console.log(brightness);
-                    // }
+                    this.reduceDencity(col, row, .005);
                     this.ctx.fillStyle = 'rgb(' + brightness + ', ' + brightness + ', ' + brightness + ')';
                     this.ctx.fillRect(col, row, this.cellScale, this.cellScale);
                     this.ctx.strokeRect(col, row, this.cellScale, this.cellScale);
@@ -56,9 +52,12 @@ class FluidView {
 
     addDensity(x, y, amount) {
         let old = this.density[this.indexCanvas(y, x)];
-        //console.log(old);
         this.density[this.indexCanvas(y, x)] = Math.min(1.0, old + amount);
-        //console.log(this.density[this.indexCanvas(y, x)]);
+    }
+
+    reduceDencity(x, y, amount) {
+        let old = this.density[this.indexCanvas(y, x)];
+        this.density[this.indexCanvas(y, x)] = Math.max(0.0, old - amount);
     }
 
     static lerp(a, b, alpha) {

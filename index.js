@@ -15,10 +15,8 @@ function main() {
     });
 
     webGLCanvas.addEventListener('mousedown', e => {
-        fluidView.addDensity(e.offsetX, e.offsetY, .1);
+        fluidView.addDensity(e.offsetX, e.offsetY, .25);
     })
-
-    console.log(fluidView.density);
 }
 
 main();
