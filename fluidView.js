@@ -63,6 +63,11 @@ class FluidView {
         this.density[this.indexCanvas(y, x)] = Math.max(0.0, old - amount);
     }
 
+    addVelocity(x, x0, y, y0, time) {
+        this.Vx[this.indexCanvas(x, y)] = (x - x0) * time;
+        this.Vy[this.indexCanvas(x, y)] = (y - y0) * time;
+    }
+
     static lerp(a, b, alpha) {
         return a + (alpha * (b - a));
     }
@@ -102,7 +107,7 @@ class FluidView {
                                 x[this.index(i-1, j)] +
                                 x[this.index(i+1, j)] + 
                                 x[this.index(i, j-1)] + 
-                                x[this.index(i, j+1)])) / (1+4*a));
+                                x[this.index(i, j+1)])) / (1+(4*a)));
                 }
             }
             //setbnd
@@ -114,7 +119,7 @@ class FluidView {
         for (var i = 1; i < this.N - 1; ++i ) {
             for (var j = 1; j < this.N - 1; ++j) {
                 let x = i - (dt0 * u[this.index(i, j)]);
-                let y = j - (dt0 * u[this.index(i, j)]);
+                let y = j - (dt0 * v[this.index(i, j)]);
 
                 if (x < 0.5) {
                     x = 0.5;
