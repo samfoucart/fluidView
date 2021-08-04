@@ -5,14 +5,14 @@ class FluidView {
         this.diffusion = diffusion;
         this.viscosity = viscosity;
 
-        this.s = new Array(this.N * this.N).fill(0);
+        this.s = new Float32Array(this.N * this.N);
         this.density = new Float32Array(this.N * this.N);
 
-        this.Vx = new Array(this.N * this.N).fill(0);
-        this.Vy = new Array(this.N * this.N).fill(0);
+        this.Vx = new Float32Array(this.N * this.N);
+        this.Vy = new Float32Array(this.N * this.N);
 
-        this.Vx0 = new Array(this.N * this.N).fill(0);
-        this.Vy0 = new Array(this.N * this.N).fill(0);
+        this.Vx0 = new Float32Array(this.N * this.N);
+        this.Vy0 = new Float32Array(this.N * this.N);
 
         this.ctx = ctx;
         this.canvas = canvas;
@@ -23,6 +23,8 @@ class FluidView {
         this.activeX = -1;
 
         this.render = this.render.bind(this);
+
+        this.iterations = 20;
     }
 
     render() {
@@ -35,13 +37,14 @@ class FluidView {
                     this.ctx.fillRect(col, row, this.cellScale, this.cellScale);
                 } else {
                     let brightness = FluidView.lerp(255, 0, this.density[this.indexCanvas(row, col)]);
-                    this.reduceDencity(col, row, .005);
+                    //this.reduceDencity(col, row, .005);
                     this.ctx.fillStyle = 'rgb(' + brightness + ', ' + brightness + ', ' + brightness + ')';
                     this.ctx.fillRect(col, row, this.cellScale, this.cellScale);
                     this.ctx.strokeRect(col, row, this.cellScale, this.cellScale);
                 }
             }
         }
+        this.updateFluid();
         requestAnimationFrame(this.render);
     }
 
@@ -70,6 +73,31 @@ class FluidView {
 
     indexCanvas(row, column) {
         return Math.floor(column / this.cellScale) + (Math.floor(row / this.cellScale) * this.N);
+    }
+
+    updateFluid() {
+        // TRY SWITCHING THE Vx0 AND Vx AND density AND s TO SEE WHAT HAPPENS
+        // I THINK THE AUTHOR ACCIDENTALLY WROTE IT BACKWARDS
+        this.diffuse(1, this.Vx, this.Vx0, this.viscosity, this.dt, 4);
+        this.diffuse(2, this.Vy, this.Vy0, this.viscosity, this.dt, 4);
+        this.diffuse(0, this.density, this.s, this.diffusion, this.dt, this.iterations);
+    }
+
+    diffuse (b, x, x0, diffusion, dt, iter) {
+        let a = dt * diffusion * (this.N ) * (this.N);
+
+        for (var k = 0; k < iter; ++k) {
+            for (var i = 1; i < this.N - 1; ++i) {
+                for (var j = 1; j < this.N - 1; ++j) {
+                    x[this.index(i, j)] = (x0[this.index(i, j)] + (a * (
+                                x[this.index(i-1, j)] +
+                                x[this.index(i+1, j)] + 
+                                x[this.index(i, j-1)] + 
+                                x[this.index(i, j+1)])) / (1+4*a));
+                }
+            }
+            //setbnd
+        }
     }
 
 };

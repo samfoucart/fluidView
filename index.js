@@ -7,7 +7,7 @@ let numCells = 64;
 
 
 function main() {
-    let fluidView = new FluidView(numCells, .001, 1, 1, webGLContext, webGLCanvas, cellScale);
+    let fluidView = new FluidView(numCells, .001, 1000, 1000, webGLContext, webGLCanvas, cellScale);
     fluidView.render();
 
     webGLCanvas.addEventListener('mousemove', e => {
@@ -15,7 +15,11 @@ function main() {
     });
 
     webGLCanvas.addEventListener('mousedown', e => {
-        fluidView.addDensity(e.offsetX, e.offsetY, .25);
+        fluidView.addDensity(e.offsetX, e.offsetY, 1);
+        //fluidView.addDensity(e.offsetX - (fluidView.cellScale), e.offsetY, 1);
+        //fluidView.addDensity(e.offsetX + (fluidView.cellScale), e.offsetY, 1);
+        //fluidView.addDensity(e.offsetX, e.offsetY + (fluidView.cellScale), 1);
+        //fluidView.addDensity(e.offsetX, e.offsetY - (fluidView.cellScale), 1);
     })
 }
 
