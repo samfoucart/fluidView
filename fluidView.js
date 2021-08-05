@@ -64,8 +64,13 @@ class FluidView {
     }
 
     addVelocity(x, x0, y, y0, time) {
-        this.Vx[this.indexCanvas(x, y)] = (x - x0) * time;
-        this.Vy[this.indexCanvas(x, y)] = (y - y0) * time;
+        this.Vx[this.indexCanvas(y, x)] = (x - x0) * time;
+        this.Vy[this.indexCanvas(y, x)] = (y - y0) * time;
+    }
+
+    addVelocityDebug(x, y, xamount, yamount) {
+        this.Vx[this.indexCanvas(y, x)] = xamount;
+        this.Vy[this.indexCanvas(y, x)] = yamount;
     }
 
     static lerp(a, b, alpha) {
@@ -83,6 +88,9 @@ class FluidView {
     updateFluid() {
         // TRY SWITCHING THE Vx0 AND Vx AND density AND s TO SEE WHAT HAPPENS
         // I THINK THE AUTHOR ACCIDENTALLY WROTE IT BACKWARDS
+        this.addDensity(this.N / 2 * this.cellScale, this.N / 2 * this.cellScale, .5);
+        this.addVelocityDebug(this.N / 2 * this.cellScale, this.N / 2 * this.cellScale, 1000, 0);
+
         this.diffuse(1, this.Vx0, this.Vx, this.viscosity, this.dt, this.iterations);
         this.diffuse(2, this.Vy0, this.Vy, this.viscosity, this.dt, this.iterations);
 
@@ -107,7 +115,7 @@ class FluidView {
                                 x[this.index(i-1, j)] +
                                 x[this.index(i+1, j)] + 
                                 x[this.index(i, j-1)] + 
-                                x[this.index(i, j+1)])) / (1+(4*a)));
+                                x[this.index(i, j+1)]))) / (1+(4*a));
                 }
             }
             //setbnd
@@ -128,7 +136,7 @@ class FluidView {
                     x = this.N + .5;
                 }
                 let i0 = Math.floor(x);
-                let i1 = i0 + 1;
+                let i1 = i0 + 1.0;
     
                 if (y < .5) {
                     y = .5;
@@ -137,17 +145,23 @@ class FluidView {
                     y = this.N + .5;
                 }
                 let j0 = Math.floor(y);
-                let j1 = j0 + 1;
+                let j1 = j0 + 1.0;
     
                 let s1 = x - i0;
-                let s0 = 1 - s1;
+                let s0 = 1.0 - s1;
                 let t1 = y - j0;
-                let t0 = 1 - t1;
+                let t0 = 1.0 - t1;
+
+                let i0i = parseInt(i0);
+                let i1i = parseInt(i1);
+                let j0i = parseInt(j0);
+                let j1i = parseInt(j1);
+
     
-                d[this.index(i, j)] = s0 * (t0 * d0[this.index(i0, j0)]  +
-                                            t1 * d0[this.index(i0, j1)]) +
-                                      s1 * (t0 * d0[this.index(i1, j0)]  +
-                                            t1 * d0[this.index(i1, j1)]);    
+                d[this.index(i, j)] = s0 * (t0 * d0[this.index(i0i, j0i)]  +
+                                            t1 * d0[this.index(i0i, j1i)]) +
+                                      s1 * (t0 * d0[this.index(i1i, j0i)]  +
+                                            t1 * d0[this.index(i1i, j1i)]);    
             }
         }
         //set_bnd
@@ -174,7 +188,7 @@ class FluidView {
                                 p[this.index(i-1, j)] +
                                 p[this.index(i+1, j)] + 
                                 p[this.index(i, j-1)] + 
-                                p[this.index(i, j+1)]) / 4);
+                                p[this.index(i, j+1)])) / 4;
                 }
             }
             //setbnd

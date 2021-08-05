@@ -7,7 +7,7 @@ let numCells = 64;
 
 
 function main() {
-    let fluidView = new FluidView(numCells, .001, .001, .1, webGLContext, webGLCanvas, cellScale);
+    let fluidView = new FluidView(numCells, .001, .0001, .1, webGLContext, webGLCanvas, cellScale);
     fluidView.render();
 
     var mouseDown = false;
@@ -17,20 +17,23 @@ function main() {
 
     webGLCanvas.addEventListener('mousemove', e => {
         fluidView.hover(e.offsetX, e.offsetY);
+        fluidView.addVelocityDebug(e.offsetX, e.offsetY, -1000, 0);
         if (mouseDown) {
-            fluidView.addDensity(e.offsetX, e.offsetY, .1);
-            let d = new Date();
-            fluidView.addVelocity(e.offsetX, mouseDownX, e.offsetY, mouseDownY, d.getMilliseconds() - mouseDownTime);
+            // fluidView.addDensity(e.offsetX, e.offsetY, .1);
+            // let d = new Date();
+            // fluidView.addVelocity(e.offsetX, mouseDownX, e.offsetY, mouseDownY, d.getMilliseconds() - mouseDownTime);
         }
     });
 
     webGLCanvas.addEventListener('mousedown', e => {
         fluidView.addDensity(e.offsetX, e.offsetY, .75);
-        mouseDown = true;
-        mouseDownX = e.offsetX;
-        mouseDownY = e.offsetY;
-        let d = new Date();
-        mouseDownTime = d.getMilliseconds();
+        fluidView.addVelocityDebug(e.offsetX, e.offsetY, 0, -1000);
+        //fluidView.addVelocity(e.offsetX, e.offsetX + 10, e.offsetY, e.offsetY, 1);
+        // mouseDown = true;
+        // mouseDownX = e.offsetX;
+        // mouseDownY = e.offsetY;
+        // let d = new Date();
+        // mouseDownTime = d.getMilliseconds();
         //fluidView.addDensity(e.offsetX - (fluidView.cellScale), e.offsetY, 1);
         //fluidView.addDensity(e.offsetX + (fluidView.cellScale), e.offsetY, 1);
         //fluidView.addDensity(e.offsetX, e.offsetY + (fluidView.cellScale), 1);
